@@ -1,0 +1,64 @@
+  [
+    {
+      "name": "resume",
+      "type": "link",
+      "width": 60,
+      "height": 60,
+      "link": "./resume.pdf"
+    },
+    {
+      "name": "pointypapers",
+      "type": "link",
+      "width": 58,
+      "height": 58,
+      "link": "http://pointypapers.com"
+    },
+    {
+      "name": "cryptoladder",
+      "type": "link",
+      "width": 60,
+      "height": 60,
+      "link": "https://www.producthunt.com/posts/cryptoladder"
+    },
+      {
+        "name": "chatcircles",
+        "type": "link",
+        "width": 68,
+        "height": 68,
+        "link": "https://chatcircles.com"
+      },
+    {
+      "name": "github",
+      "type": "link",
+      "width": 65,
+      "height": 65,
+      "link": "https://github.com/WhiteRiceWill"
+    },
+    {
+      "name": "twitter",
+      "type": "link",
+      "width": 60,
+      "height": 60,
+      "link": "https://twitter.com/whitericewill"
+    },
+    {
+      "name": "linkedin",
+      "type": "link",
+      "width": 55,
+      "height": 55,
+      "link": "https://www.linkedin.com/in/willchristman"
+    },
+    {
+      "name": "mail",
+      "type": "link",
+      "width": 60,
+      "height": 60,
+      "link": "mailto:will@willchristman.com"
+    },
+    {
+      "name": "willchristman",
+      "type": "me",
+      "tooltip": true,
+      "link": null
+    }
+  ]

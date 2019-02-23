@@ -1,0 +1,15 @@
+.containerHidden {
+  opacity: 0;
+}
+
+.containerVisible {
+  width: 100vw;
+  height: 100vh;
+  opacity: 1;
+  -webkit-transition: opacity 1.4s;
+  -moz-transition: opacity 1.4s;
+  transition: opacity 1.4s;
+  -webkit-transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in;
+  transition-timing-function: ease-in;
+}

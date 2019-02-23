@@ -1,0 +1,203 @@
+.box {
+    text-align: center;
+    border: 3px solid #FFFFFF;
+    border-radius: 15px;
+    height: 130px;
+    width: 285px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    -webkit-animation: flickerBox 1.5s infinite alternate;
+    -moz-animation: flickerBox 1.5s infinite alternate;
+    animation: flickerBox 1.5s infinite alternate;
+}
+
+.text1 {
+    font-family: "Good Times";
+    font-size: 36px;
+    font-weight: 400;
+    color: #FFFFFF;
+    padding-top: 27px;
+    -webkit-animation: flickerText 1.5s infinite alternate;
+    -moz-animation: flickerText 1.5s infinite alternate;
+    animation: flickerText 1.5s infinite alternate;
+}
+
+.text2 {
+    font-family: "Good Times";
+    font-size: 18px;
+    font-weight: 400;
+    color: #FFFFFF;
+    padding-top: 5px;
+    -webkit-animation: flickerText 1.5s infinite alternate;
+    -moz-animation: flickerText 1.5s infinite alternate;
+    animation: flickerText 1.5s infinite alternate;
+
+}
+
+@-webkit-keyframes flickerBox {
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+
+        box-shadow:
+            0 0 2.5px #FFFFFF,
+            inset 0 0 2.5px #FFFFFF,
+            0 0 10px #0ABDC6,
+            inset 0 0 10px #0ABDC6,
+            0 0 20px #0ABDC6,
+            inset 0 0 20px #0ABDC6;
+    }
+
+    20%,
+    24%,
+    55% {
+        box-shadow: none;
+    }
+}
+
+@-moz-keyframes flickerBox {
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+
+        box-shadow:
+            0 0 2.5px #FFFFFF,
+            inset 0 0 2.5px #FFFFFF,
+            0 0 10px #0ABDC6,
+            inset 0 0 10px #0ABDC6,
+            0 0 20px #0ABDC6,
+            inset 0 0 20px #0ABDC6;
+    }
+
+    20%,
+    24%,
+    55% {
+        box-shadow: none;
+    }
+}
+
+
+@keyframes flickerBox {
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+
+        box-shadow:
+            0 0 2.5px #FFFFFF,
+            inset 0 0 2.5px #FFFFFF,
+            0 0 10px #0ABDC6,
+            inset 0 0 10px #0ABDC6,
+            0 0 20px #0ABDC6,
+            inset 0 0 20px #0ABDC6;
+    }
+
+    20%,
+    24%,
+    55% {
+        box-shadow: none;
+    }
+}
+
+
+@-webkit-keyframes flickerText {
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+        text-shadow:
+            -1px -1px 3px #FFFFFF,
+            1px 1px 3px #FFFFFF,
+            0 0 5px #EA00D9,
+            0 0 10px #EA00D9,
+            0 0 15px #EA00D9,
+            0 0 20px #EA00D9,
+            0 0 25px #EA00D9;
+    }
+
+    20%,
+    24%,
+    55% {
+        text-shadow: none;
+    }
+}
+
+@-moz-keyframes flickerText {
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+        text-shadow:
+            -1px -1px 3px #FFFFFF,
+            1px 1px 3px #FFFFFF,
+            0 0 5px #EA00D9,
+            0 0 10px #EA00D9,
+            0 0 15px #EA00D9,
+            0 0 20px #EA00D9,
+            0 0 25px #EA00D9;
+    }
+
+    20%,
+    24%,
+    55% {
+        text-shadow: none;
+    }
+}
+
+@keyframes flickerText {
+
+    0%,
+    19%,
+    21%,
+    23%,
+    25%,
+    54%,
+    56%,
+    100% {
+        text-shadow:
+            -1px -1px 3px #FFFFFF,
+            1px 1px 3px #FFFFFF,
+            0 0 5px #EA00D9,
+            0 0 10px #EA00D9,
+            0 0 15px #EA00D9,
+            0 0 20px #EA00D9,
+            0 0 25px #EA00D9;
+    }
+
+    20%,
+    24%,
+    55% {
+        text-shadow: none;
+    }
+}
