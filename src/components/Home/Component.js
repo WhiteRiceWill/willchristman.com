@@ -306,6 +306,8 @@ class Home extends Component {
       .append('circle')
       .attr('class', 'linkCircle')
       .attr('r', radius)
+      .attr('border', 'none')
+      .attr('outline', 'none')
       .attr('fill', d => `url(#${d.name})`)
       .on('mouseenter', function freeze(d) {
         // Freeze the node and enlarge it

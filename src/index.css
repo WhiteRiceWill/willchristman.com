@@ -12,6 +12,9 @@ body {
   user-select: none;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+a, a:active, a:focus {
+   outline: none;
+}
 
 @font-face {
   font-family: 'Open Sans';
