@@ -18,7 +18,6 @@ class Home extends Component {
       visible: false,
     };
 
-
     // Set smaller node radius on mobile devices
     this.regR = 60;
     this.mobileR = 46;
@@ -33,6 +32,8 @@ class Home extends Component {
     this.h = window.innerHeight;
     this.mouseX = null;
     this.mouseY = null;
+    this.tickCounter = 0;
+
     // Pulls this node data from the json file
     this.nodes = nodes;
 
@@ -53,6 +54,7 @@ class Home extends Component {
     // Set up d3 force simulation and start
     this.d3Graph = d3.select(ReactDOM.findDOMNode(this.refs.graph));
     this.d3Graph.on('mousemove', this.getMouse);
+    this.d3Graph.on('touchmove', this.getMouse);
     this.force = this.createForce();
     this.force.on('tick', this.tickActions);
 
@@ -78,6 +80,8 @@ class Home extends Component {
   // and is responsible for the animation stepping forward.
   // (it makes the circles move)
   tickActions() {
+    this.tickCounter += 1;
+
     // Keeps my node static and centered
     this.meNode
       .attr('transform', (d) => {
@@ -88,9 +92,34 @@ class Home extends Component {
         return `translate(${d.x}, ${d.y})`;
       });
 
+
+    // Calculate the current total velocity in the simulation
+    let totalVelocity = 0;
+    this.linkNode
+      .attr('transform', (d) => {
+        totalVelocity += Math.abs(d.vx) + Math.abs(d.vy);
+      });
+
     // Moves the link nodes forward
     this.linkNode
       .attr('transform', (d) => {
+        // Store the node's position every 25 ticks in lx (last x) and ly (last y)
+        // We use these in several different ways for the drag functionality
+        if (this.tickCounter % 25 === 0) {
+          d.lx = d.x;
+          d.ly = d.y;
+        }
+
+        // When the total simulation's velocity goes outside of our
+        // set range, this gradually brings it back
+        if (totalVelocity < 3) {
+          d.vx *= 1.003;
+          d.vy *= 1.003;
+        } else if (totalVelocity > 30) {
+          d.vx *= 0.997;
+          d.vy *= 0.997;
+        }
+
         // Basic pythagorean calculation to find distance from mouse to center of node
         const a = this.mouseX - d.x;
         const b = this.mouseY - d.y;
@@ -273,6 +302,10 @@ class Home extends Component {
   // take you to a link
   createLinkNodes() {
     const radius = this.r;
+    let mouseDownRecently = false;
+    let nodeDragData = {};
+    let dragging = false;
+    let mouseUpRecently = false;
 
     this.linkNode = this.d3Graph.selectAll(null)
       .data(this.nodes.slice(0, 8))
@@ -280,56 +313,37 @@ class Home extends Component {
       .append('g');
 
     this.linkNode
-      .append('a')
-      .on('click', function clickNode(d) {
-        // Unfreeze the node and return to it's stored velocity
-        d.frozen = false;
-        d.vx = d.vxs;
-        d.vy = d.vys;
-        // Reset the circle and icon to their unfrozen state
-        d.r = radius;
-        d3.select(this.parentNode).select('.linkCircle')
-          .transition()
-          .duration(0)
-          .attr('r', radius);
-
-        d3.select(this.parentNode).select('.icon')
-          .transition()
-          .duration(0)
-          .attr('width', z => z.width)
-          .attr('height', z => z.height)
-          .attr('x', z => -z.width / 2)
-          .attr('y', z => -z.height / 2);
-      })
-      .attr('xlink:href', d => d.link)
-      .attr('target', '_blank')
       .append('circle')
       .attr('class', 'linkCircle')
       .attr('r', radius)
       .attr('border', 'none')
       .attr('outline', 'none')
+      .style('cursor', 'pointer')
       .attr('fill', d => `url(#${d.name})`)
       .on('mouseenter', function freeze(d) {
         // Freeze the node and enlarge it
-        d.frozen = true;
-        d.vxs = d.vx;
-        d.vys = d.vy;
-        d.r = radius * 1.085;
-        d3.select(this)
-          .transition()
-          .duration(210)
-          .attr('r', radius * 1.085);
+        // (the if statement is just a bug fix to ensure the drag feature works as desired)
+        if (!dragging && !mouseUpRecently) {
+          d.frozen = true;
+          d.vxs = d.vx;
+          d.vys = d.vy;
+          d.r = radius * 1.085;
+          d3.select(this)
+            .transition()
+            .duration(210)
+            .attr('r', radius * 1.085);
 
-        d3.select(this.parentNode.parentNode).select('.icon')
-          .transition()
-          .duration(210)
-          .attr('width', z => z.width * 1.14)
-          .attr('height', z => z.height * 1.14)
-          .attr('x', z => (-z.width / 2) * 1.14)
-          .attr('y', z => (-z.height / 2) * 1.14);
+          d3.select(this.parentNode).select('.icon')
+            .transition()
+            .duration(210)
+            .attr('width', z => z.width * 1.14)
+            .attr('height', z => z.height * 1.14)
+            .attr('x', z => (-z.width / 2) * 1.14)
+            .attr('y', z => (-z.height / 2) * 1.14);
+        }
       })
       .on('mouseleave', function unFreeze(d) {
-        if (d.frozen) {
+        if (d.frozen && !dragging) {
           // Unfreeze the node and return to it's stored velocity
           d.frozen = false;
           d.vx = d.vxs;
@@ -341,7 +355,7 @@ class Home extends Component {
             .duration(210)
             .attr('r', radius);
 
-          d3.select(this.parentNode.parentNode).select('.icon')
+          d3.select(this.parentNode).select('.icon')
             .transition()
             .duration(210)
             .attr('width', z => z.width)
@@ -349,7 +363,76 @@ class Home extends Component {
             .attr('x', z => -z.width / 2)
             .attr('y', z => -z.height / 2);
         }
-      });
+      })
+      .call(d3.drag()
+        .on('start', (d) => {
+          dragging = true;
+
+          // Capture data from the drag start
+          this.getMouse();
+          nodeDragData = {
+            startX: d.x,
+            startY: d.y,
+            difX: this.mouseX - d.x,
+            difY: this.mouseY - d.y,
+          };
+
+          // mouseDownRecently is used on mouse up/ drag end to help determine
+          // if the user's intention was to click or drag
+          mouseDownRecently = true;
+          setTimeout(() => {
+            mouseDownRecently = false;
+          }, 500);
+        })
+        .on('drag', (d) => {
+          // Update node position on drag
+          this.getMouse();
+          d.x = this.mouseX - nodeDragData.difX;
+          d.y = this.mouseY - nodeDragData.difY;
+        })
+        .on('end', function endDrag(d) {
+          dragging = false;
+
+          // Helps fix bug where upon drag release the mouse would
+          // enter the node again causing it to freeze
+          mouseUpRecently = true;
+          setTimeout(() => {
+            mouseUpRecently = false;
+          }, 100);
+
+          // Unfreeze the node and calculate a velocity based on the direction/speed of the drag
+          d.frozen = false;
+          d.vx = (d.x - d.lx) / 10;
+          d.vy = (d.y - d.ly) / 10;
+
+          while (Math.abs(d.vx) + Math.abs(d.vy) > 30) {
+            d.vx /= 1.3;
+            d.vy /= 1.3;
+          }
+
+          // Reset the circle and icon to their unfrozen state
+          d.r = radius;
+          d3.select(this)
+            .transition()
+            .duration(0)
+            .attr('r', radius);
+
+          d3.select(this.parentNode).select('.icon')
+            .transition()
+            .duration(0)
+            .attr('width', z => z.width)
+            .attr('height', z => z.height)
+            .attr('x', z => -z.width / 2)
+            .attr('y', z => -z.height / 2);
+
+          // Open link if the user's intention was most likely
+          // a click and not a drag (based on if mouse was
+          // down recently, and if drag distance was short)
+          if (mouseDownRecently && Math.abs(nodeDragData.startX - d.x) < 10
+          && Math.abs(nodeDragData.startY - d.y) < 10) {
+            window.open(d.link, '_blank');
+          }
+        }));
 
     // Add an icon to the node
     this.linkNode.append('svg:image')
@@ -470,7 +553,7 @@ class Home extends Component {
       .attr('class', 'tooltip')
       .attr('x', -80)
       .attr('y', this.r + 68)
-      .text('👨‍💻 Full-stack developer')
+      .text('👨‍💻 Full-stack Developer')
       .attr('fill', '#B9C9D9')
       .attr('font-family', 'Open Sans')
       .attr('font-weight', 400)
