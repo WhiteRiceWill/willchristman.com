@@ -429,7 +429,7 @@ class Home extends Component {
           // down recently, and if drag distance was short)
           if (mouseDownRecently && Math.abs(nodeDragData.startX - d.x) < 10
           && Math.abs(nodeDragData.startY - d.y) < 10) {
-            window.open(d.link, '_blank');
+            window.open(d.link, d.link === 'mailto:will@willchristman.com' ? '_self' : '_blank');
           }
         }));
 
