@@ -158,8 +158,7 @@ class Home extends Component {
   // This essentially means that during a collision, energy transfers
   // between nodes rather than canceling out. The force surface
   // module is responsible for elastic collisions with the edges
-  // of the screen. This creates a closed system that conserves
-  // energy (with the exception of when a link node collides with my node).
+  // of the screen.
   createForce() {
     return (
       d3.forceSimulation()

@@ -4,15 +4,52 @@ import { history } from '../../configureStore';
 import styles from './App.module.css';
 import Home from '../Home/Container';
 import NotFound from '../NotFound/Component';
-import background from '../../assets/background.jpg';
+
+const pathToBackgrounds = require.context('../../assets/backgrounds', true);
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      background: 0,
+    };
+
+    this.toggleBackground = this.toggleBackground.bind(this);
+  }
+
+  componentDidMount() {
+    document.addEventListener('keypress', this.toggleBackground);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keypress', this.toggleBackground);
+  }
+
+  // Rotate through background images
+  toggleBackground(e) {
+    if (e.key === 't') {
+      const { background } = this.state;
+      if (background === 4) {
+        this.setState({
+          background: 0,
+        });
+      } else {
+        this.setState({
+          background: background + 1,
+        });
+      }
+    }
+  }
+
   render() {
+    const { background } = this.state;
+    const backgroundImg = pathToBackgrounds(`./${background}.jpg`, true);
     return (
       <div style={{
         width: '100vw',
         height: '100vh',
-        backgroundImage: `url(${background}`,
+        backgroundImage: `url(${backgroundImg}`,
         backgroundSize: 'cover',
       }}
       >
